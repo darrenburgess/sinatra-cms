@@ -17,4 +17,11 @@ class CmsTest < Minitest::Test
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
     assert_equal "", last_response.body
   end
+
+  def test_data
+    get "/data/about.txt"
+    assert_equal 200, last_response.status
+    assert_equal "text/plain", last_response["Content-Type"]
+    assert_equal "about text\n", last_response.body
+  end
 end

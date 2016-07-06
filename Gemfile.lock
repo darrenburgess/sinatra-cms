@@ -1,6 +1,8 @@
 GEM
+  remote: https://rubygems.org/
   specs:
     backports (3.6.8)
+    minitest (5.8.2)
     multi_json (1.12.1)
     rack (1.6.4)
     rack-protection (1.5.3)
@@ -24,6 +26,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  minitest
   sinatra
   sinatra-contrib
 

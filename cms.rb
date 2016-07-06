@@ -4,12 +4,12 @@ require 'tilt/erubis'
 require 'pry'
 
 =begin
-viewing text files
-- convert list of files to links using hrefs
-- point each link to the location of the file
-- create a route to display the text file
-- the browser will display the file as plain text
-- set content-type so browser will display as plain text
+add tests
+- create a cms_test.rb file in new test directory
+- add testing setup code and required libraries
+- create a CmsTest class that subclasses from Minitest::Test 
+- write tests for testing the index route
+- write tests for testing the data/file route
 =end
 
 get "/" do

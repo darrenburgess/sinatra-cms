@@ -26,7 +26,7 @@ get "/data/:file_name" do
   if File.exist? full_path
     file = File.open full_path
     headers["Content-Type"] = "text/plain"
-    @content = file.read
+    file.read
   else
     session[:error] = "#{file_name} does not exist!"
     redirect "/"

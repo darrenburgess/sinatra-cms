@@ -4,19 +4,6 @@ require 'tilt/erubis'
 require 'pry'
 
 =begin
-handle requests for nonexistent documents
-- add a not_found block that redirects to home
-- add a check to the file display block to check if the file exists
-- modify route to store a flash message on file error
-- in layout.erb, create a conditional paragraph that
-  displays if there is an error
-- enable sessions in a configure block
-  - use a configure block to enable sessions and set a session secret.
-  - must restart server to get the session to work
-- write a test:
-  - execute the route with a nonexistant file
-  - confirm the redirect
-  - confirm the flash message text
 =end
 
 configure do

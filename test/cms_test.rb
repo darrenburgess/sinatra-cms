@@ -16,16 +16,23 @@ class CmsTest < Minitest::Test
     get "/"
     assert_equal 200, last_response.status
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-    assert_includes last_response.body, "about.txt"
+    assert_includes last_response.body, "about.md"
     assert_includes last_response.body, "changes.txt"
-    assert_includes last_response.body, "history.txt"
+    assert_includes last_response.body, "history.md"
   end
 
-  def test_data
-    get "/data/about.txt"
+  def test_text_data
+    get "/data/changes.txt"
     assert_equal 200, last_response.status
     assert_equal "text/plain", last_response["Content-Type"]
-    assert_equal "about text\n", last_response.body
+    assert_includes last_response.body, "changes text"
+  end
+
+  def test_markdown_data
+    get "/data/about.md"
+    assert_equal 200, last_response.status
+    assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+    assert_includes last_response.body, "<h1>about heading text</h1>"
   end
 
   def test_nonexistant_file

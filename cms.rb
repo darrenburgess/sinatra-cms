@@ -5,21 +5,6 @@ require 'redcarpet'
 require 'pry'
 
 =begin
-viewing markdown files
-- markdown files can be converted using the redcarpet gem
-- add redcarpet to the gemfile
-- require redcarpet in the application
-- run bundle install to install the gem
-- rename the content files to *.md
-- modify the content data to use markdown
-- create a method to convert markdown
-  - create a new markdown object
-  - return the rendered markdown content
-  - use the markdown.render method to render the content as html
-- create new content erb
-  - create a new view erb file to render accept the rendered html
-- invoke the new erb layout in the /data/:file_name route
-- update tests to test for converted mark down
 =end
 
 configure do

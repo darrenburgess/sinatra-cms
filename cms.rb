@@ -5,6 +5,18 @@ require 'redcarpet'
 require 'pry'
 
 =begin
+editing document content
+- create a new file edit route
+- add a edit form button to index view
+- create new view for editing document
+  - form field for populated with document content
+  - form save button to write new content out to file
+- create a new file save route
+- return user to index on save with flash message
+- new tests
+  - edit links on index page
+  - navigation to edit view
+  - editing of document
 =end
 
 configure do
@@ -25,6 +37,30 @@ get "/" do
   erb :index, layout: :layout
 end
 
+get "/data/:file_name/edit" do
+  @file_name = params[:file_name]
+  full_path = "data/#{@file_name}"
+
+  if File.exist? full_path
+    file = File.open full_path
+    @content = file.read
+    erb :edit, layout: :layout
+  else
+    session[:error] = "#{@file_name} does not exist!"
+    redirect "/"
+  end
+end
+
+post "/data/:file_name/save" do
+  file_name = params[:file_name]
+  full_path = "data/#{file_name}"
+  content = params[:content]
+
+  File.write full_path, content
+  session[:message] =  "#{file_name} was successfully updated!"
+  redirect "/"
+end
+
 get "/data/:file_name" do
   file_name = params[:file_name]
   full_path = "data/#{file_name}"
@@ -41,7 +77,7 @@ get "/data/:file_name" do
       erb :content, layout: :layout
     end
   else
-    session[:error] = "#{file_name} does not exist!"
+    session[:message] = "#{file_name} does not exist!"
     redirect "/"
   end
 end

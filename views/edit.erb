@@ -2,7 +2,13 @@
 
 <form action="/data/<%= @file_name %>/save" method="post">
   <p>
-    <input style="padding: 0 5px 300px" name="content" type="textarea" value="<%= @content %>" size="100"></input>
+  <input style="padding: 0 5px 300px" 
+         name="content" 
+         type="textarea" 
+         value="<%= @content %>" 
+         size="100"
+         autofocus="autofocus">
+  </input>
   </p>
   <p><button type="submit">Save Changes</button></p>
 </form>

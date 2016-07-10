@@ -5,18 +5,6 @@ require 'redcarpet'
 require 'pry'
 
 =begin
-editing document content
-- create a new file edit route
-- add a edit form button to index view
-- create new view for editing document
-  - form field for populated with document content
-  - form save button to write new content out to file
-- create a new file save route
-- return user to index on save with flash message
-- new tests
-  - edit links on index page
-  - navigation to edit view
-  - editing of document
 =end
 
 configure do

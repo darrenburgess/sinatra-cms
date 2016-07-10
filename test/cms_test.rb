@@ -36,6 +36,7 @@ class CmsTest < Minitest::Test
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
     assert_includes last_response.body, "about.md"
     assert_includes last_response.body, "changes.txt"
+    assert_includes last_response.body, "New Document"
   end
 
   def test_text_data
@@ -95,5 +96,13 @@ class CmsTest < Minitest::Test
 
     assert_equal 200, last_response.status
     assert_includes last_response.body, "new content" 
+  end
+
+  def test_new_document_view
+    get "/new"
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "Create a new document"
+    assert_includes last_response.body, "<input"
   end
 end

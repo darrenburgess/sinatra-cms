@@ -13,7 +13,8 @@ configure do
 end
 
 before do
-  @files = Dir["./data/*"].map { |f| File.basename f }
+  pattern = File.join(data_path, "*")
+  @files = Dir.glob(pattern).map { |path| File.basename path }
 end
 
 def render_as_html(mark_down)
@@ -21,13 +22,21 @@ def render_as_html(mark_down)
   markdown.render mark_down
 end
 
+def data_path
+  if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/data", __FILE__)
+  else
+    File.expand_path("../data", __FILE__)
+  end
+end
+
 get "/" do
   erb :index, layout: :layout
 end
 
-get "/data/:file_name/edit" do
+get "/:file_name/edit" do
   @file_name = params[:file_name]
-  full_path = "data/#{@file_name}"
+  full_path = File.join(data_path, @file_name)
 
   if File.exist? full_path
     file = File.open full_path
@@ -39,9 +48,9 @@ get "/data/:file_name/edit" do
   end
 end
 
-post "/data/:file_name/save" do
+post "/:file_name" do
   file_name = params[:file_name]
-  full_path = "data/#{file_name}"
+  full_path = File.join(data_path, file_name)
   content = params[:content]
 
   File.write full_path, content
@@ -49,9 +58,9 @@ post "/data/:file_name/save" do
   redirect "/"
 end
 
-get "/data/:file_name" do
+get "/:file_name" do
   file_name = params[:file_name]
-  full_path = "data/#{file_name}"
+  full_path = File.join(data_path, file_name)
 
   if File.exist? full_path
     file = File.open full_path

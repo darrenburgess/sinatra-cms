@@ -5,12 +5,19 @@ require 'redcarpet'
 require 'pry'
 
 =begin
-adding global style and behavior
-- add a css directory
-- create an application.css file
-- reference application.css in layout.erb
-- target the font with san sarif font style
-- target the flash message with a yellow background
+creating new documents
+- add a link to index that navigates to new document page
+- add a route for the new document creation form
+- create a new template for the new document form
+- add a route to create a new document
+  - flash message should read "doc_name was created"
+  - if user does not supply a name flash message = "a name is required"
+  - redirect user to index with flash message on successful creation
+  - redirect to edit for on empty name
+- add tests
+  - new document form
+  - creation of new document
+  - flash message for no document name  
 =end
 
 configure do
@@ -38,6 +45,10 @@ end
 
 get "/" do
   erb :index, layout: :layout
+end
+
+get "/new" do
+  erb :new, layout: :layout
 end
 
 get "/:file_name/edit" do
@@ -84,3 +95,4 @@ get "/:file_name" do
     redirect "/"
   end
 end
+

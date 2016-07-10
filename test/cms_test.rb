@@ -44,4 +44,22 @@ class CmsTest < Minitest::Test
     assert_equal 200, last_response.status
     assert_includes last_response.body, "garbage_file.testing does not exist"
   end
+
+  def test_edit_view
+    get "/data/about.md/edit"
+    assert_equal 200, last_response.status
+    assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+    assert_includes last_response.body, "Edit content of: about.md"
+  end
+
+  def test_file_save
+    full_path = "data/about.md"
+    file = File.open full_path
+    content = file.read
+    new_content = content + "\nthis is a test" 
+
+    post "/data/:file_name/save"
+    content = file.read
+    assert_includes content, "/nthis is a test"
+  end
 end

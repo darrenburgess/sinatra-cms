@@ -50,16 +50,18 @@ class CmsTest < Minitest::Test
     assert_equal 200, last_response.status
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
     assert_includes last_response.body, "Edit content of: about.md"
+    assert_includes last_response.body, "<textarea"
   end
 
   def test_file_save
-    full_path = "data/about.md"
-    file = File.open full_path
-    content = file.read
-    new_content = content + "\nthis is a test" 
+    post "/data/about.md/save", content: "new content"
+    assert_equal 302, last_response.status
 
-    post "/data/:file_name/save"
-    content = file.read
-    assert_includes content, "/nthis is a test"
+    get last_response["Location"]
+    assert_includes last_response.body, "about.md has been updated"
+
+    get "/data/about.md"
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "new content" 
   end
 end

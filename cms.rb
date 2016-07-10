@@ -5,6 +5,12 @@ require 'redcarpet'
 require 'pry'
 
 =begin
+adding global style and behavior
+- add a css directory
+- create an application.css file
+- reference application.css in layout.erb
+- target the font with san sarif font style
+- target the flash message with a yellow background
 =end
 
 configure do

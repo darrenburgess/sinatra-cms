@@ -51,6 +51,22 @@ get "/new" do
   erb :new, layout: :layout
 end
 
+post "/new" do
+  file_name = params[:file_name].to_s.strip
+
+  if file_name.size > 0
+    session[:message] = "File name cannot be empty"
+    redirect "/new"
+  else
+    full_path = File.join(data_path, file_name)
+
+    File.write file_path, ""
+    session[:message] = "#{file_name} was successfully created!"
+
+    redirect "/"
+  end
+end
+
 get "/:file_name/edit" do
   @file_name = params[:file_name]
   full_path = File.join(data_path, @file_name)

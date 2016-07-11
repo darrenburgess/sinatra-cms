@@ -5,6 +5,9 @@
         <a href="<%= file %>"><%= file %></a>
         <button type="submit">Edit</button>
       </form>
+      <form action="/<%= file %>/destroy" method="post">
+        <button type="submit">Delete</button>
+      </form>
     </li>
   <% end %>
   <br><br>

@@ -105,4 +105,20 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "Create a new document"
     assert_includes last_response.body, "<input"
   end
+
+  def test_create_new_document
+    file_name = "test.txt"
+    post "/new", file_name: "test.txt"
+
+    assert_equal 302, last_response.status
+
+    get last_response["Location"]
+    assert_includes last_response.body, "test.txt was successfully created!"
+
+    get "/"
+    assert_includes last_response.body, "test.txt"
+  end
+
+  def test_no_name_for_new_document
+  end
 end

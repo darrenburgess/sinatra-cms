@@ -107,7 +107,6 @@ class CmsTest < Minitest::Test
   end
 
   def test_create_new_document
-    file_name = "test.txt"
     post "/new", file_name: "test.txt"
 
     assert_equal 302, last_response.status
@@ -120,5 +119,8 @@ class CmsTest < Minitest::Test
   end
 
   def test_no_name_for_new_document
+    post "/new", file_name: ""
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "File name cannot be empty"
   end
 end

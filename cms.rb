@@ -5,19 +5,6 @@ require 'redcarpet'
 require 'pry'
 
 =begin
-creating new documents
-- add a link to index that navigates to new document page
-- add a route for the new document creation form
-- create a new template for the new document form
-- add a route to create a new document
-  - flash message should read "doc_name was created"
-  - if user does not supply a name flash message = "a name is required"
-  - redirect user to index with flash message on successful creation
-  - redirect to edit for on empty name
-- add tests
-  - new document form
-  - creation of new document
-  - flash message for no document name  
 =end
 
 configure do

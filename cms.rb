@@ -100,3 +100,13 @@ get "/:file_name" do
   end
 end
 
+post "/:file_name/destroy" do
+  file_name = params[:file_name]
+  full_path = File.join(data_path, file_name)
+
+  File.delete full_path
+
+  session[:message] = "#{file_name} was successfully deleted"
+  redirect "/"
+end
+

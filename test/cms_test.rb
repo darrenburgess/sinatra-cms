@@ -37,6 +37,7 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "about.md"
     assert_includes last_response.body, "changes.txt"
     assert_includes last_response.body, "New Document"
+    assert_includes last_response.body, "Delete"
   end
 
   def test_text_data
@@ -122,5 +123,21 @@ class CmsTest < Minitest::Test
     post "/new", file_name: ""
     assert_equal 422, last_response.status
     assert_includes last_response.body, "File name cannot be empty"
+  end
+
+  def test_document_destroy
+    create_document "test.txt", "content for test"
+
+    post "/test.txt/destroy"
+    assert_equal 302, last_response.status
+
+    get "/" 
+    assert_includes last_response.body, "test.txt was successfully deleted"
+
+    get "/test.txt"
+    assert_equal 302, last_response.status
+
+    get "/"
+    assert_includes last_response.body, "test.txt does not exist"
   end
 end

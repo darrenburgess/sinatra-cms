@@ -7,3 +7,7 @@ body {
   padding: 10px;
   background: yellow;
 }
+
+form {
+  display: inline;
+}

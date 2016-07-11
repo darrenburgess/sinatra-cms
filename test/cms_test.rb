@@ -131,7 +131,7 @@ class CmsTest < Minitest::Test
     post "/test.txt/destroy"
     assert_equal 302, last_response.status
 
-    get "/" 
+    get last_response["Location"] 
     assert_includes last_response.body, "test.txt was successfully deleted"
 
     get "/test.txt"
@@ -139,5 +139,9 @@ class CmsTest < Minitest::Test
 
     get "/"
     assert_includes last_response.body, "test.txt does not exist"
+
+    get "/"
+    refute_includes last_response.body, "test.txt does not exist"
+    refute_includes last_response.body, "test.txt"
   end
 end

@@ -54,13 +54,14 @@ end
 post "/new" do
   file_name = params[:file_name].to_s.strip
 
-  if file_name.size > 0
+  if file_name.size == 0
     session[:message] = "File name cannot be empty"
-    redirect "/new"
+    status 422
+    erb :new, layout: :layout
   else
     full_path = File.join(data_path, file_name)
 
-    File.write file_path, ""
+    File.write full_path, ""
     session[:message] = "#{file_name} was successfully created!"
 
     redirect "/"

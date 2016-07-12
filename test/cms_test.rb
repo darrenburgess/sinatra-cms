@@ -20,23 +20,24 @@ class CmsTest < Minitest::Test
     FileUtils.rm_rf(data_path)
   end
 
+  def session
+    last_request.env["rack.session"]
+  end
+
   def create_document(name, content = "")
     File.open(File.join(data_path, name), "w") do |file|
       file.write(content)
     end
   end
 
-  def test_index
+  def test_index_as_signed_in_user
     create_document "about.md"
     create_document "changes.txt"
 
-    get "/"
+    get "/", {}, {"rack.session" => {username: "admin"} }
 
-    assert_equal 302, last_response.status
+    assert_equal 200, last_response.status
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-
-    post "/users/signin", username: "admin", password: "secret"
-
     assert_includes last_response.body, "about.md"
     assert_includes last_response.body, "changes.txt"
     assert_includes last_response.body, "New Document"

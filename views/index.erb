@@ -10,6 +10,12 @@
       </form>
     </li>
   <% end %>
-  <br><br>
-  <a href="/new">New Document</a>
 </ul>
+<br><br>
+<p><a href="/new">New Document</a></p>
+<p>Signed in as <%= session[:username] %></p>
+<p>
+  <form action="/users/signout" method="post">
+    <button type="submit">Sign out</button
+  </form>
+</p>

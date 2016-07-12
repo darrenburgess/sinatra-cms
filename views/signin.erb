@@ -1,0 +1,16 @@
+<h1>Please log in:</h1>
+
+<form action="/users/signin" method="post">
+  <p>
+    <label>User name</label>
+    <input type="text" name="username" value="<%= @username %>"></input>
+  </p>
+  <p>
+    <label>Password</label>
+    <input type="password" name="password"></input>
+  </p>
+
+  <button type="submit">Sign in</button>
+</form>
+
+<p><a href="/">Home</a></p>

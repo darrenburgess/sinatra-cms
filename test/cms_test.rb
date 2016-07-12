@@ -144,4 +144,12 @@ class CmsTest < Minitest::Test
     refute_includes last_response.body, "test.txt does not exist"
     refute_includes last_response.body, "test.txt"
   end
+
+  def test_signin_form
+    get "/users/signin"
+    assert_equal 200, last_response.status
+
+    assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+    assert_includes last_response.body, "Please log in:"
+  end
 end

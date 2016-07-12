@@ -73,8 +73,9 @@ post "/users/signin" do
     redirect "/"
   else
     session[:message] = "Incorrect user name or password"
+    status 422
     @username = username
-    erb :signin, layout: :layout
+    erb :signin
   end
 end
 

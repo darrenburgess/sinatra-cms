@@ -5,6 +5,27 @@ require 'redcarpet'
 require 'pry'
 
 =begin
+signing in and out
+- create a session property related to signing in and out. username: user and logged_in: true
+- redirect index route to users/signin when session[:logged_in] == false
+- create a new signin form template
+  - add username and password form fields
+  - add sign in button
+  - form should have an action to submit credentials, checking if username = admin and password = secret
+- create a userlogin route to check credentials or return error
+  - check credentials
+  - update login session property
+  - redirect to index with welcome flash message
+  - return error on incorrect credetials
+- modify index template
+  - add text to indicate signed in user
+  - add sign out button
+- create route to signout the current user
+  - set the session signout property
+  - redirect to signin view with signout successful flash message
+- tests
+  - content of signin form
+  - redirect to signin form when no user is logged in (session user is nil)
 =end
 
 configure do
@@ -31,7 +52,36 @@ def data_path
 end
 
 get "/" do
-  erb :index, layout: :layout
+  if session[:username]
+    erb :index, layout: :layout
+  else
+    redirect "/users/signin"
+  end
+end
+
+get "/users/signin" do
+  erb :signin, layout: :layout
+end
+
+post "/users/signin" do
+  username = params[:username]
+  password = params[:password]
+
+  if username == "admin" && password == "secret"
+    session[:username] = username
+    session[:message] = "Welcome, #{username}"
+    redirect "/"
+  else
+    session[:message] = "Incorrect user name or password"
+    @username = username
+    erb :signin, layout: :layout
+  end
+end
+
+post "/users/signout" do
+  username = session.delete(:username)
+  session[:message] = "#{username} has been successfully signed out"
+  redirect "/"
 end
 
 get "/new" do

@@ -32,8 +32,11 @@ class CmsTest < Minitest::Test
 
     get "/"
 
-    assert_equal 200, last_response.status
+    assert_equal 302, last_response.status
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+
+    post "/users/signin", username: "admin", password: "secret"
+
     assert_includes last_response.body, "about.md"
     assert_includes last_response.body, "changes.txt"
     assert_includes last_response.body, "New Document"
@@ -151,5 +154,43 @@ class CmsTest < Minitest::Test
 
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
     assert_includes last_response.body, "Please log in:"
+  end
+
+  def test_route_when_not_signed_in
+    get "/"
+    assert_equal 302, last_response.status
+
+    assert_includes last_response.body, "Please log in:"
+    assert last_response, ""
+  end
+
+  def test_valid_signin
+    post "/users/signin", username: "admin", password: "secret"
+  
+    assert_equal 302, last_response.status
+
+    get last_response["Location"]
+    assert_includes last_response.body, "Welcome, admin"
+    assert_includes last_response.body, "Signed in as admin"
+  end
+
+  def test_invalid_signin
+    post "/users/signin", username: "wrong_username", password: "wrong_password"
+
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "Incorrect username or password"
+    assert_includes last_response.body, "wrong_username"
+  end
+
+  def test_signout
+    post "/users/signin", username: "admin", password: "secret"
+    get last_response["Location"]
+    assert_includes last_response.body, "Welcome, admin"
+
+    post "/users/signout"
+    get last_response["Location"]
+
+    assert_includes last_response.body, "admin has been successfully signed out"
+    assert_inlcudes last_response.body, "Sign In"
   end
 end

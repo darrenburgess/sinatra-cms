@@ -5,27 +5,6 @@ require 'redcarpet'
 require 'pry'
 
 =begin
-restricting actions to only signed in users
-- move the admin session hash structure to a helper method
-- modify tests to use admin_session method
-- add signed_in? helper method to application
-- refactor user actions to:
-  - redirect to index
-  - use sign_in?
-  - provide flash message "You must be signed in to do that"
-- the following user actions should be modified
-  - visit edit page
-  - submit changes
-  - view document page
-  - submit new document
-  - delete document
-- application changes required:
-  - create helper method to see if user signed in.  should have a redirect to signin or index 
-  - modify routes to use helper method. the redirect will halt execution of the route
-- tests:
-  - modify existing test names to reflect signed in status
-  - modify existing tests to simulate signed in user
-  - create new tests for each user action for signed out status
 =end
 
 configure do

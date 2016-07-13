@@ -105,9 +105,7 @@ class CmsTest < Minitest::Test
 
   def test_edit_view_when_signed_out
     create_document "some_file.txt"
-    
     get "/some_file.txt/edit"
-
     run_signed_out_tests
   end
 
@@ -129,6 +127,12 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "new content" 
   end
 
+  def test_file_save_when_signed_out
+    create_document "about.md", "test content"
+    post "/about.md", content: "new content"
+    run_signed_out_tests
+  end
+
   def test_new_document_view_when_signed_in
     sign_in_as_admin
     get "/new"
@@ -136,6 +140,11 @@ class CmsTest < Minitest::Test
     assert_equal 200, last_response.status
     assert_includes last_response.body, "Create a new document"
     assert_includes last_response.body, "<input"
+  end
+
+  def test_new_document_view_when_signed_out
+    get "/new"
+    run_signed_out_tests
   end
 
   def test_create_new_document_when_signed_in
@@ -149,6 +158,11 @@ class CmsTest < Minitest::Test
 
     get "/"
     assert_includes last_response.body, "test.txt"
+  end
+
+  def test_create_new_document_when_signed_out
+    post "/new", file_name: "test.txt"
+    run_signed_out_tests
   end
 
   def test_no_name_for_new_document_when_signed_in
@@ -177,6 +191,12 @@ class CmsTest < Minitest::Test
     get "/"
     refute_includes last_response.body, "test.txt does not exist"
     refute_includes last_response.body, "test.txt"
+  end
+
+  def test_document_destroy_when_signed_out
+    create_document "test.txt", "content for test"
+    post "test.txt/destroy"
+    run_signed_out_tests
   end
 
   def test_signin_form

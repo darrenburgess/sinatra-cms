@@ -34,7 +34,11 @@ class CmsTest < Minitest::Test
     { "rack.session" => { username: "admin" } }
   end
 
-  def test_index_as_signed_in_user
+  def sign_in_as_admin
+    get "/", {}, admin_session
+  end
+
+  def test_index_when_signed_in
     create_document "about.md"
     create_document "changes.txt"
 
@@ -48,9 +52,10 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "Delete"
   end
 
-  def test_text_data
+  def test_text_data_when_signed_in
     create_document "changes.txt", "changes text"
 
+    sign_in_as_admin
     get "/changes.txt"
 
     assert_equal 200, last_response.status
@@ -58,18 +63,19 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "changes text"
   end
 
-  def test_markdown_data
+  def test_markdown_data_when_signed_in
     create_document "about.md", "# about heading text"
 
-    get "about.md"
+    sign_in_as_admin
+    get "/about.md"
 
     assert_equal 200, last_response.status
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
     assert_includes last_response.body, "<h1>about heading text</h1>"
   end
 
-  def test_nonexistant_file
-    get "/garbage_file.testing"
+  def test_nonexistant_file_when_signed_in
+    get "/garbage_file.testing", {}, admin_session
 
     assert_equal 302, last_response.status
 
@@ -79,9 +85,10 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "garbage_file.testing does not exist"
   end
 
-  def test_edit_view
+  def test_edit_view_when_signed_in
     create_document "about.md", "test content"
 
+    sign_in_as_admin
     get "/about.md/edit"
 
     assert_equal 200, last_response.status
@@ -91,9 +98,10 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "test content"
   end
 
-  def test_file_save
+  def test_file_save_when_signed_in
     create_document "about.md", "test content"
 
+    sign_in_as_admin
     post "/about.md", content: "new content"
 
     assert_equal 302, last_response.status
@@ -107,7 +115,8 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "new content" 
   end
 
-  def test_new_document_view
+  def test_new_document_view_when_signed_in
+    sign_in_as_admin
     get "/new"
 
     assert_equal 200, last_response.status
@@ -115,7 +124,8 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "<input"
   end
 
-  def test_create_new_document
+  def test_create_new_document_when_signed_in
+    sign_in_as_admin
     post "/new", file_name: "test.txt"
 
     assert_equal 302, last_response.status
@@ -127,7 +137,8 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "test.txt"
   end
 
-  def test_no_name_for_new_document
+  def test_no_name_for_new_document_when_signed_in
+    sign_in_as_admin
     post "/new", file_name: ""
     assert_equal 422, last_response.status
     assert_includes last_response.body, "File name cannot be empty"
@@ -136,7 +147,7 @@ class CmsTest < Minitest::Test
   def test_document_destroy
     create_document "test.txt", "content for test"
 
-    post "/test.txt/destroy"
+    post "/test.txt/destroy", {}, admin_session
     assert_equal 302, last_response.status
 
     get last_response["Location"], {}, {"rack.session" => { username: "admin"} }

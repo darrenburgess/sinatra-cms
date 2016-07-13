@@ -5,6 +5,27 @@ require 'redcarpet'
 require 'pry'
 
 =begin
+restricting actions to only signed in users
+- move the admin session hash structure to a helper method
+- modify tests to use admin_session method
+- add signed_in? helper method to application
+- refactor user actions to:
+  - redirect to index
+  - use sign_in?
+  - provide flash message "You must be signed in to do that"
+- the following user actions should be modified
+  - visit edit page
+  - submit changes
+  - view document page
+  - submit new document
+  - delete document
+- application changes required:
+  - create helper method to see if user signed in.  should have a redirect to signin or index 
+  - modify routes to use helper method. the redirect will halt execution of the route
+- tests:
+  - modify existing test names to reflect signed in status
+  - modify existing tests to simulate signed in user
+  - create new tests for each user action for signed out status
 =end
 
 configure do
@@ -30,8 +51,23 @@ def data_path
   end
 end
 
+def signed_in?
+  session[:username]
+end
+
+def not_signed_in?
+  !session[:username]
+end
+
+def redirect_when_signed_out
+  if not_signed_in?
+    session[:message] = "You must be signed in to do that."
+    redirect "/"
+  end
+end
+
 get "/" do
-  if session[:username]
+  if signed_in?
     erb :index, layout: :layout
   else
     redirect "/users/signin"
@@ -65,10 +101,13 @@ post "/users/signout" do
 end
 
 get "/new" do
+  redirect_when_signed_out
   erb :new, layout: :layout
 end
 
 post "/new" do
+  redirect_when_signed_out
+
   file_name = params[:file_name].to_s.strip
 
   if file_name.size == 0
@@ -86,6 +125,9 @@ post "/new" do
 end
 
 get "/:file_name/edit" do
+  redirect_when_signed_out
+
+
   @file_name = params[:file_name]
   full_path = File.join(data_path, @file_name)
 
@@ -100,6 +142,8 @@ get "/:file_name/edit" do
 end
 
 post "/:file_name" do
+  redirect_when_signed_out
+
   file_name = params[:file_name]
   full_path = File.join(data_path, file_name)
   content = params[:content]
@@ -110,6 +154,8 @@ post "/:file_name" do
 end
 
 get "/:file_name" do
+  redirect_when_signed_out
+
   file_name = params[:file_name]
   full_path = File.join(data_path, file_name)
 
@@ -131,6 +177,8 @@ get "/:file_name" do
 end
 
 post "/:file_name/destroy" do
+  redirect_when_signed_out
+
   file_name = params[:file_name]
   full_path = File.join(data_path, file_name)
 

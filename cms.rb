@@ -67,11 +67,7 @@ def redirect_when_signed_out
 end
 
 get "/" do
-  if signed_in?
-    erb :index, layout: :layout
-  else
-    redirect "/users/signin"
-  end
+  erb :index, layout: :layout
 end
 
 get "/users/signin" do
@@ -126,7 +122,6 @@ end
 
 get "/:file_name/edit" do
   redirect_when_signed_out
-
 
   @file_name = params[:file_name]
   full_path = File.join(data_path, @file_name)

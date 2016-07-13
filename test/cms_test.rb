@@ -38,6 +38,11 @@ class CmsTest < Minitest::Test
     get "/", {}, admin_session
   end
 
+  def run_signed_out_tests
+    assert_equal 302, last_response.status
+    assert_equal "You must be signed in to do that.", session[:message]
+  end
+
   def test_index_when_signed_in
     create_document "about.md"
     create_document "changes.txt"
@@ -97,6 +102,15 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "<input"
     assert_includes last_response.body, "test content"
   end
+
+  def test_edit_view_when_signed_out
+    create_document "some_file.txt"
+    
+    get "/some_file.txt/edit"
+
+    run_signed_out_tests
+  end
+
 
   def test_file_save_when_signed_in
     create_document "about.md", "test content"
@@ -175,11 +189,8 @@ class CmsTest < Minitest::Test
 
   def test_route_when_not_signed_in
     get "/"
-    assert_equal 302, last_response.status
-
-    get last_response["Location"]
-    assert_includes last_response.body, "Please log in:"
-    assert last_response, ""
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "Sign In"
   end
 
   def test_valid_signin

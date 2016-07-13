@@ -144,10 +144,11 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, "File name cannot be empty"
   end
 
-  def test_document_destroy
+  def test_document_destroy_when_signed_in
     create_document "test.txt", "content for test"
 
-    post "/test.txt/destroy", {}, admin_session
+    sign_in_as_admin
+    post "/test.txt/destroy"
     assert_equal 302, last_response.status
 
     get last_response["Location"], {}, {"rack.session" => { username: "admin"} }

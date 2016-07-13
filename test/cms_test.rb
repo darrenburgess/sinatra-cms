@@ -69,7 +69,7 @@ class CmsTest < Minitest::Test
 
     assert_equal 302, last_response.status
 
-    get last_response["location"]
+    get last_response["location"], {}, { "rack.session" => { username: "admin" } }
 
     assert_equal 200, last_response.status
     assert_includes last_response.body, "garbage_file.testing does not exist"
@@ -94,7 +94,7 @@ class CmsTest < Minitest::Test
 
     assert_equal 302, last_response.status
 
-    get last_response["Location"]
+    get last_response["Location"], {}, {"rack.session" => { username: "admin"} }
     assert_includes last_response.body, "about.md was successfully updated"
 
     get "/about.md"
@@ -116,7 +116,7 @@ class CmsTest < Minitest::Test
 
     assert_equal 302, last_response.status
 
-    get last_response["Location"]
+    get last_response["Location"], {}, { "rack.session" => { username: "admin" } }
     assert_includes last_response.body, "test.txt was successfully created!"
 
     get "/"
@@ -135,7 +135,7 @@ class CmsTest < Minitest::Test
     post "/test.txt/destroy"
     assert_equal 302, last_response.status
 
-    get last_response["Location"] 
+    get last_response["Location"], {}, {"rack.session" => { username: "admin"} }
     assert_includes last_response.body, "test.txt was successfully deleted"
 
     get "/test.txt"
@@ -161,6 +161,7 @@ class CmsTest < Minitest::Test
     get "/"
     assert_equal 302, last_response.status
 
+    get last_response["Location"]
     assert_includes last_response.body, "Please log in:"
     assert last_response, ""
   end
@@ -177,21 +178,20 @@ class CmsTest < Minitest::Test
 
   def test_invalid_signin
     post "/users/signin", username: "wrong_username", password: "wrong_password"
-
     assert_equal 422, last_response.status
     assert_includes last_response.body, "Incorrect username or password"
     assert_includes last_response.body, "wrong_username"
   end
 
   def test_signout
-    post "/users/signin", username: "admin", password: "secret"
-    get last_response["Location"]
-    assert_includes last_response.body, "Welcome, admin"
+    get "/", {}, { "rack.session" => { username: "admin" } }
+    assert_includes last_response.body, "Signed in as admin"
 
     post "/users/signout"
     get last_response["Location"]
 
+    assert_equal nil, session[:username]
     assert_includes last_response.body, "admin has been successfully signed out"
-    assert_inlcudes last_response.body, "Sign In"
+    assert_includes last_response.body, "Sign In"
   end
 end

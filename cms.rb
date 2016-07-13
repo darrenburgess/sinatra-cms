@@ -72,7 +72,7 @@ post "/users/signin" do
     session[:message] = "Welcome, #{username}"
     redirect "/"
   else
-    session[:message] = "Incorrect user name or password"
+    session[:message] = "Incorrect username or password"
     status 422
     @username = username
     erb :signin

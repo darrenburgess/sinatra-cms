@@ -30,11 +30,15 @@ class CmsTest < Minitest::Test
     end
   end
 
+  def admin_session
+    { "rack.session" => { username: "admin" } }
+  end
+
   def test_index_as_signed_in_user
     create_document "about.md"
     create_document "changes.txt"
 
-    get "/", {}, {"rack.session" => {username: "admin"} }
+    get "/", {}, admin_session
 
     assert_equal 200, last_response.status
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
@@ -69,7 +73,7 @@ class CmsTest < Minitest::Test
 
     assert_equal 302, last_response.status
 
-    get last_response["location"], {}, { "rack.session" => { username: "admin" } }
+    get last_response["location"], {}, admin_session
 
     assert_equal 200, last_response.status
     assert_includes last_response.body, "garbage_file.testing does not exist"
@@ -94,7 +98,7 @@ class CmsTest < Minitest::Test
 
     assert_equal 302, last_response.status
 
-    get last_response["Location"], {}, {"rack.session" => { username: "admin"} }
+    get last_response["Location"], {}, admin_session
     assert_includes last_response.body, "about.md was successfully updated"
 
     get "/about.md"
@@ -116,7 +120,7 @@ class CmsTest < Minitest::Test
 
     assert_equal 302, last_response.status
 
-    get last_response["Location"], {}, { "rack.session" => { username: "admin" } }
+    get last_response["Location"], {}, admin_session
     assert_includes last_response.body, "test.txt was successfully created!"
 
     get "/"
@@ -184,7 +188,7 @@ class CmsTest < Minitest::Test
   end
 
   def test_signout
-    get "/", {}, { "rack.session" => { username: "admin" } }
+    get "/", {}, admin_session
     assert_includes last_response.body, "Signed in as admin"
 
     post "/users/signout"

@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'redcarpet'
+require 'yaml'
 require 'pry'
 
 =begin
@@ -30,6 +31,10 @@ def data_path
   end
 end
 
+def load_users
+  YAML::load(File.open "data/users.yml")
+end
+
 def signed_in?
   session[:username]
 end
@@ -56,8 +61,10 @@ end
 post "/users/signin" do
   username = params[:username]
   password = params[:password]
+  users = load_users
+  entered_password = users[username].first unless users[username] == nil
 
-  if username == "admin" && password == "secret"
+  if entered_password == password
     session[:username] = username
     session[:message] = "Welcome, #{username}"
     redirect "/"

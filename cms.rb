@@ -3,6 +3,7 @@ require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'redcarpet'
 require 'yaml'
+require 'bcrypt'
 require 'pry'
 
 =begin
@@ -32,7 +33,11 @@ def data_path
 end
 
 def load_users
-  YAML::load(File.open "data/users.yml")
+  if ENV["RACK_ENV"] == "test"
+    YAML::load(File.open "test/users.yml")
+  else
+    YAML::load(File.open "data/users.yml")
+  end
 end
 
 def signed_in?
@@ -50,6 +55,17 @@ def redirect_when_signed_out
   end
 end
 
+def valid_credentials?(username, password)
+  credentials = load_users
+
+  if credentials.key?(username)
+    bcrypt_password = BCrypt::Password.new(credentials[username][0])
+    bcrypt_password == password
+  else
+    false
+  end
+end
+
 get "/" do
   erb :index, layout: :layout
 end
@@ -61,10 +77,8 @@ end
 post "/users/signin" do
   username = params[:username]
   password = params[:password]
-  users = load_users
-  entered_password = users[username].first unless users[username] == nil
 
-  if entered_password == password
+  if valid_credentials? username, password
     session[:username] = username
     session[:message] = "Welcome, #{username}"
     redirect "/"
